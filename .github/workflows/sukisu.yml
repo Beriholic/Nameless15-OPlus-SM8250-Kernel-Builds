@@ -1,4 +1,4 @@
-name: Build Nameless OPlus SM8250 SuKi SU Kernel
+name: Build Nameless OPlus SM8250 SukiSU Kernel
 
 on:
   workflow_dispatch:
@@ -49,10 +49,10 @@ jobs:
         cd $GITHUB_WORKSPACE/patches
         sed -i '1655 r path_umount.c' $GITHUB_WORKSPACE/kernel_workspace/android-kernel/fs/namespace.c
 
-    - name: Setup official KernelSU
+    - name: Setup official SuKiSU
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
-        curl -LSs "https://raw.githubusercontent.com/ShirkNeko/KernelSU/main/kernel/setup.sh" | bash -s susfs-stable
+        curl -LSs "https://raw.githubusercontent.com/ShirkNeko/KernelSU/main/kernel/setup.sh" | bash -s susfs-dev
         KSU_VERSION=$(cd KernelSU && expr $(/usr/bin/git rev-list --count HEAD) + 10200)
         echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
       
@@ -122,7 +122,7 @@ jobs:
 
     - name: add get_cred_rcu
       run: |
-        cd $GITHUB_WORKSksupatches
+        cd $GITHUB_WORKSPACE/patches
         sed -i '260 r get_cred_rcu.h' $GITHUB_WORKSPACE/kernel_workspace/android-kernel/include/linux/cred.h
         sed -i 's/atomic_inc_not_zero(&((struct cred \*)cred)->usage)/get_cred_rcu(cred)/g' $GITHUB_WORKSPACE/kernel_workspace/android-kernel/kernel/cred.c
 
@@ -186,3 +186,4 @@ jobs:
         name: AK3-Nameless-OPlus-SM8250-Unofficial-KSU_${{ env.KSUVER_1 }}-${{ env.BUILD_TIME }}
         path: kernel_workspace/AnyKernel3/*
 
+  
